@@ -5,9 +5,11 @@ const bodyParser = require('body-parser');
 
 const rotaDenunciante = require('./routes/denunciante');
 const rotaDenuncia = require('./routes/denuncia');
-const rotaNomeDenunciado = require('./routes/nomeDenunciado')
+const rotaNomeDenunciado = require('./routes/nomeDenunciado');
+const rotaFoto = require('./routes/foto');
 
 app.use(morgan('dev'));
+app.use('/uploads', express.static('uploads'));
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 
@@ -29,6 +31,7 @@ app.use((req, res, next)=>{
 app.use('/denunciante', rotaDenunciante);
 app.use('/denuncia', rotaDenuncia);
 app.use('/nomeDenunciado', rotaNomeDenunciado);
+app.use('/foto', rotaFoto);
 
 app.use((req, res, next)=>{ 
     const erro = new Error('Não encontrada');

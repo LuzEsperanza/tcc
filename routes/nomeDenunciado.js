@@ -65,7 +65,7 @@ router.post('/', (req, res, next)=>{
                 }
 
                 const response = {
-                    mensagem: 'NomeDenunciado atualizado com sucesso',
+                    mensagem: 'NomeDenunciado inserido com sucesso',
                     nomeAtualizado :{
                         id: result.id,
                         nomeDenunciado: req.body.nomeDenunciado,

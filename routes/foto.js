@@ -1,8 +1,38 @@
 const express = require('express');
 const router = express.Router();
 const mysql = require('../mysql').pool;
+const multer = require('multer');
 
-//Retorna todos os denunciantes
+
+const storage = multer.diskStorage({ 
+    destination : function(req, file, cb){
+        cb(null, './uploads/');
+    },
+    filename : function(req, file, cb){
+        cb(null, new Date().toISOString() + file.originalname)
+    }
+});
+
+const fileFilter = (req, file, cb) =>{
+    if(file.mimetype === 'image/jpeg' || file.mimetype === 'image/png'){
+        cb(null, true);
+
+    }else{
+        cb(null, false);
+    }
+
+
+}
+
+const upload = multer({
+    storage : storage,
+    limits : {
+        fileSize : 1024 * 1024 * 5
+    },
+    fileFilter : fileFilter
+});
+
+//Retorna todas as fotos
 router.get('/', (req, res, next) =>{
    
    mysql.getConnection((error, conn)=>{
@@ -10,8 +40,8 @@ router.get('/', (req, res, next) =>{
         return res.status(500).send({error: error})
     }
     conn.query(
-        'SELECT * FROM Denunciante;', 
-        [req.body.nome, req.body.senha, req.body.login],
+        'SELECT * FROM Foto;', 
+       
         (error, result, fields) => {
             conn.release();
             if(error){
@@ -19,16 +49,17 @@ router.get('/', (req, res, next) =>{
             }
             const response = {
                 quantidade: result.length,
-                denunciante: result.map( denun => {
+                fotos: result.map( fot => {
                     return {
-                        denuncianteID: denun.denuncianteID,
-                        nome: denun.nome, 
-                        senha: denun.senha, 
-                        login: denun.login,
+                        id: fot.id,
+                        denuncia: fot.denuncia,
+                        imagem_denuncia: fot.imagem_denuncia,
+                        
+                        
                         request: {
                             tipo: 'GET', 
-                            descricao: 'Retorna todos os detalhes um denunciante espefico', 
-                            url: 'http://localhost:3000/denunciante/' + denun.denuncianteID
+                            descricao: 'Retorna todos os detalhes uma foto espefico', 
+                            url: 'http://localhost:3000/foto/' + fot.id
                         }
                     }
                 })
@@ -41,9 +72,9 @@ router.get('/', (req, res, next) =>{
    });
 });
 
-//Insere um denunciante
-router.post('/', (req, res, next)=>{
-    
+//Insere uma foto
+router.post('/', upload.single('foto_imagem'), (req, res, next)=>{
+    console.log(req.file.path);
 
     mysql.getConnection((error, conn)=>{
 
@@ -54,8 +85,8 @@ router.post('/', (req, res, next)=>{
         
         conn.query(
            
-            'INSERT INTO Denunciante (nome, senha, login) VALUES (?,?,?)',
-            [req.body.nome, req.body.senha, req.body.login],
+            'INSERT INTO Foto (denuncia, imagem_denuncia) VALUES (?,?)',
+            [req.body.denuncia, req.file.path],
             (error, result, field) => {
                 conn.release();
 
@@ -68,15 +99,15 @@ router.post('/', (req, res, next)=>{
                 }
 
                 const response = {
-                    mensagem: 'Denunciante inserido com sucesso',
-                    denuncianteAtualizado :{
-                        denuncianteID: result.denuncianteID,
-                        nome: req.body.nome,
-                        senha: req.body.senha,
-                        login: req.body.login,
+                    mensagem: 'Foto inserida com sucesso',
+                    fotoAtualizado :{
+                        id: result.id,
+                        denuncia: req.body.denuncia,
+                        imagem_denuncia: req.file.path,
+                        
                         request: {
                             tipo: 'GET', 
-                            descricao: 'Returna todos os denunciantes', 
+                            descricao: 'Returna todas as fotos', 
                             url: 'http://localhost:3000/denunciante' 
                         }
                     }
@@ -90,7 +121,7 @@ router.post('/', (req, res, next)=>{
 });
 
 //Retorna os dados de um denunciante
-router.get('/:denuncianteID', (req, res, next) =>{
+router.get('/:id', (req, res, next) =>{
     mysql.getConnection((error, conn)=>{
 
         if(error){
@@ -99,8 +130,8 @@ router.get('/:denuncianteID', (req, res, next) =>{
         
         conn.query(
            
-            'SELECT * FROM Denunciante WHERE denuncianteID = ?;',
-            [req.params.denuncianteID],
+            'SELECT * FROM Foto WHERE id = ?;',
+            [req.params.id],
             (error, result, field) => {
                 conn.release();
 
@@ -114,7 +145,7 @@ router.get('/:denuncianteID', (req, res, next) =>{
 
                 if(result.length === 0){
                     return res.status(404).send({
-                        mensagem: 'Não foi encontrado denunciante com esse id'
+                        mensagem: 'Não foi encontrada foto  com esse id'
                     })
 
 
@@ -123,14 +154,14 @@ router.get('/:denuncianteID', (req, res, next) =>{
                 const response = {
                     
                     denunciante :{
-                        denuncianteID: result[0].denuncianteID,
-                        nome: result[0].nome,
-                        senha: result[0].senha,
-                        login: result[0].login,
+                        id: result[0].id,
+                        denuncia: result[0].denuncia,
+                        imagem_denuncia: result[0].imagem_denuncia,
+                        
                         request: {
                             tipo: 'GET', 
-                            descricao: 'Returna todos os denunciantes', 
-                            url: 'http://localhost:3000/denunciante' 
+                            descricao: 'Returna todas as fotos', 
+                            url: 'http://localhost:3000/foto' 
                         }
                         
                     }
@@ -157,8 +188,8 @@ router.patch('/', (req, res, next) =>{
         
         conn.query(
            
-            'UPDATE Denunciante SET nome = ?, senha = ?, login = ? WHERE denuncianteID = ?',
-            [req.body.nome, req.body.senha, req.body.login, req.body.denuncianteID],
+            'UPDATE Foto SET imagem_denuncia = ? WHERE id = ?',
+            [req.file.path, req.body.id],
             (error, result, field) => {
                 conn.release();
 
@@ -178,16 +209,15 @@ router.patch('/', (req, res, next) =>{
                 }
                 
                 const response = {
-                    mensagem : 'Denuncia atualizado com sucesso',
+                    mensagem : 'Foto atualizado com sucesso',
                     denuncianteAtualizado: {
-                        denuncianteID: req.body.denuncianteID,
-                        nome: req.body.nome,
-                        senha: req.body.senha,
-                        login: req.body.login,
+                        id: req.body.id,
+                        imagem_denuncia: req.body.imagem_denuncia,
+                       
                         request: {
                             tipo: 'GET',
-                            descricao: 'Retorna todos os denunciantes',
-                            url: 'http://localhost:3000/denunciante'+ req.body.denuncianteID
+                            descricao: 'Retorna todos as fotos',
+                            url: 'http://localhost:3000/denunciante'+ req.body.id
                         }
                     }
                 }

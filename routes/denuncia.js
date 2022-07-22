@@ -1,16 +1,48 @@
 const express = require('express');
 const router = express.Router();
 const mysql = require('../mysql').pool;
+const multer = require('multer');
+
+const storage = multer.diskStorage({ 
+    destination : function(req, file, cb){
+        cb(null, './uploads/');
+    },
+    filename : function(req, file, cb){
+        cb(null, new Date().toISOString() + file.originalname)
+    }
+});
+
+const fileFilter = (req, file, cb) =>{
+    if(file.mimetype === 'image/jpeg' || file.mimetype === 'image/png'){
+        cb(null, true);
+
+    }else{
+        cb(null, false);
+    }
+
+
+}
+
+const upload = multer({
+    storage : storage,
+    limits : {
+        fileSize : 1024 * 1024 * 5
+    },
+    fileFilter : fileFilter
+});
+
 
 //Retorna todos os denuncia
 router.get('/', (req, res, next) =>{
+   
 
     mysql.getConnection((error, conn)=>{
         if(error){
             return res.status(500).send({error: error})
         }
         conn.query(
-            `SELECT Denuncia.descricao, 
+            `SELECT Denuncia.id,
+                    Denuncia.descricao, 
                     Denuncia.veracidade,
                     Denuncia.horarioAbordagem,
                     Denuncia.nomeDenunciado,
@@ -23,7 +55,7 @@ router.get('/', (req, res, next) =>{
                     Denuncia.geometria,
                     Denuncia.encaminhado,
                     Denuncia.condicao,
-                    Denuncia.tipoAtividade,
+                    
                     NomeDenunciado.nomeDenunciado
                FROM Denuncia
              INNER JOIN NomeDenunciado 
@@ -52,7 +84,7 @@ router.get('/', (req, res, next) =>{
                             geometria: denunc.geometria,
                             encaminhado: denunc.encaminhado,
                             condicao: denunc.condicao,
-                            tipoAtividade: denunc.tipoAtividade,
+                            
                             NomeDenunciado: {
                                 nomeDenunciado: denunc.nomeDenunciado,
 
@@ -75,7 +107,8 @@ router.get('/', (req, res, next) =>{
 });
 
 //Insere um denuncia
-router.post('/', (req, res, next)=>{
+router.post('/',upload.single('denuncia_imagem') ,(req, res, next)=>{
+    console.log(req.file);
 
     mysql.getConnection((error, conn)=>{
         if(error){
@@ -99,7 +132,7 @@ router.post('/', (req, res, next)=>{
 
                 conn.query(
            
-            'INSERT INTO Denuncia (descricao, horarioAbordagem , nomeDenunciado, estado, cidade, rua, numero, bairro, cep, geometria, tipoAtividade) VALUES (?,?,?,?,?,?,?,?,?,?,?)',
+            'INSERT INTO Denuncia (descricao, horarioAbordagem , nomeDenunciado, estado, cidade, rua, numero, bairro, cep, geometria) VALUES (?,?,?,?,?,?,?,?,?,?)',
             [
                 req.body.descricao,
                 req.body.horarioAbordagem,
@@ -111,7 +144,7 @@ router.post('/', (req, res, next)=>{
                 req.body.bairro,
                 req.body.cep,
                 req.body.geometria,
-                req.body.tipoAtividade
+                
 
             ],
             (error, result, field) => {
@@ -126,7 +159,7 @@ router.post('/', (req, res, next)=>{
                 }
 
                 const response = {
-                    mensagem: 'Denuncia atualizado com sucesso',
+                    mensagem: 'Denuncia inderida com sucesso',
                     denunciaAtualizado :{
                         id: result.id,
                         descricao: req.body.descricao,
@@ -139,7 +172,7 @@ router.post('/', (req, res, next)=>{
                         bairro: req.body.bairro,
                         cep: req.body.cep,
                         geometria: req.body.geometria,
-                        tipoAtividade: req.body.tipoAtividade,
+                        
                         request: {
                             tipo: 'GET', 
                             descricao: 'Returna todos os denuncia', 
@@ -208,7 +241,6 @@ router.get('/:id', (req, res, next) =>{
                         bairro: result[0].bairro,
                         cep: result[0].cep,
                         geometria: result[0].geometria,
-                        tipoAtividade: result[0].tipoAtividade,
                         encaminhado: result[0].encaminhado,
                         condicao: result[0].condicao,
                        
@@ -240,8 +272,8 @@ router.patch('/', (req, res, next) =>{
         
         conn.query(
            
-            'UPDATE Denuncia SET veracidade = ?, tipoAtividade = ?, encaminhado = ?, condicao = ? WHERE id = ?',
-            [req.body.veracidade, req.body.tipoAtividade, req.body.encaminhado, req.body.condicao, req.body.id],
+            'UPDATE Denuncia SET veracidade = ?, encaminhado = ?, condicao = ? WHERE id = ?',
+            [req.body.veracidade, req.body.encaminhado, req.body.condicao, req.body.id],
             (error, result, field) => {
                 conn.release();
 
@@ -265,7 +297,6 @@ router.patch('/', (req, res, next) =>{
                     mensagem : 'Denuncia atualizado com sucesso',
                     denunciaAtualizado: {
                         id: req.body.id,
-                        tipoAtividade: req.body.tipoAtividade,
                         condicao: req.body.condicao,
                         
                         request: {
@@ -327,7 +358,6 @@ router.delete('/', (req, res, next) =>{
                             bairro: 'String',
                             cep: 'String',
                             geometria: 'Decimal',
-                            tipoAtividade: 'String',
                             encaminhado: 'String',
                             condicao: 'String',
                         }
