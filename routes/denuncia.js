@@ -107,8 +107,8 @@ router.get('/', (req, res, next) =>{
 });
 
 //Insere um denuncia
-router.post('/',upload.single('denuncia_imagem') ,(req, res, next)=>{
-    console.log(req.file);
+router.post('/',(req, res, next)=>{
+    
 
     mysql.getConnection((error, conn)=>{
         if(error){
@@ -301,8 +301,8 @@ router.patch('/', (req, res, next) =>{
                         
                         request: {
                             tipo: 'GET',
-                            descricao: 'Retorna todos od denuncia',
-                            url: 'http://localhost:3000/denuncia'+ req.body.denuncia
+                            descricao: 'Retorna todos os de talahes  de uma denuncia',
+                            url: 'http://localhost:3000/denuncia'+ req.body.id
                         }
                     }
                 }

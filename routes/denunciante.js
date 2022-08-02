@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const mysql = require('../mysql').pool;
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 //Retorna todos os denunciantes
 router.get('/', (req, res, next) =>{
@@ -11,7 +13,7 @@ router.get('/', (req, res, next) =>{
     }
     conn.query(
         'SELECT * FROM Denunciante;', 
-        [req.body.nome, req.body.senha, req.body.login],
+        [req.body.nome, req.body.senha, req.body.email],
         (error, result, fields) => {
             conn.release();
             if(error){
@@ -24,7 +26,7 @@ router.get('/', (req, res, next) =>{
                         denuncianteID: denun.denuncianteID,
                         nome: denun.nome, 
                         senha: denun.senha, 
-                        login: denun.login,
+                        email: denun.email,
                         request: {
                             tipo: 'GET', 
                             descricao: 'Retorna todos os detalhes um denunciante espefico', 
@@ -42,49 +44,61 @@ router.get('/', (req, res, next) =>{
 });
 
 //Insere um denunciante
-router.post('/', (req, res, next)=>{
+router.post('/cadastro', (req, res, next)=>{
     
 
     mysql.getConnection((error, conn)=>{
 
         if(error){
             return res.status(500).send({error: error})
-        }
-    
-        
+        }   
         conn.query(
-           
-            'INSERT INTO Denunciante (nome, senha, login) VALUES (?,?,?)',
-            [req.body.nome, req.body.senha, req.body.login],
-            (error, result, field) => {
-                conn.release();
-
+            'SELECT * FROM Denunciante WHERE email = ?', [req.body.email],(error,results) =>{
                 if(error){
-                    return res.status(500).send({
-                        error: error,
-                        response: null
-
-                    });
+                    return res.status(500).send({error: error})
                 }
-
-                const response = {
-                    mensagem: 'Denunciante inserido com sucesso',
-                    denuncianteAtualizado :{
-                        denuncianteID: result.denuncianteID,
-                        nome: req.body.nome,
-                        senha: req.body.senha,
-                        login: req.body.login,
-                        request: {
-                            tipo: 'GET', 
-                            descricao: 'Returna todos os denunciantes', 
-                            url: 'http://localhost:3000/denunciante' 
+                if(results.length > 0){
+                    res.status(409).send({mensagem: 'Email do Denunciante já cadastrado '})
+                }else{
+                    bcrypt.hash(req.body.senha, 10, (errBcrypt, hash) => {
+                        if(errBcrypt){
+                            return res.status(500).send({error: errBcrypt})
                         }
-                    }
-                }
+                        conn.query(
+                            'INSERT INTO Denunciante (nome, email, senha) VALUES (?,?,?)',
+                            [req.body.nome, req.body.email, hash],
+                            (error, result) =>{
+                                conn.release();
+                                if (error){
+            
+                                    return res.status(500).send({error: error})
+            
+                                }
+                                response = {
+                                    mensagem: 'Denunciante criado com sucesso',
+                                    atendenteAtualizado :{
+                                        id: result.id,
+                                        nome: req.body.nome,
+                                        email: req.body.email,
+                                        senha: req.body.senha,
+                                        
+                                        request: {
+                                            tipo: 'GET', 
+                                            descricao: 'Returna todos os denunciantes', 
+                                            url: 'http://localhost:3000/denunciante' 
+                                        }
+                                    }
+                                }
+            
+                                res.status(201).send(response);
+            
+                            })
+            
+                    });
 
-                res.status(201).send(response);
-            }) 
-        
+                }
+            })
+   
     })
     
 });
@@ -126,7 +140,7 @@ router.get('/:denuncianteID', (req, res, next) =>{
                         denuncianteID: result[0].denuncianteID,
                         nome: result[0].nome,
                         senha: result[0].senha,
-                        login: result[0].login,
+                        email: result[0].email,
                         request: {
                             tipo: 'GET', 
                             descricao: 'Returna todos os denunciantes', 
@@ -153,51 +167,73 @@ router.patch('/', (req, res, next) =>{
         if(error){
             return res.status(500).send({error: error})
         }
-    
         
         conn.query(
-           
-            'UPDATE Denunciante SET nome = ?, senha = ?, login = ? WHERE denuncianteID = ?',
-            [req.body.nome, req.body.senha, req.body.login, req.body.denuncianteID],
-            (error, result, field) => {
-                conn.release();
-
+            'SELECT * FROM Atendente WHERE email = ?', [req.body.email],(error,results) =>{
                 if(error){
-                    return res.status(500).send({
-                        error: error,
-                        response: null
-
-                    });
+                    return res.status(500).send({error: error})
                 }
-                if(result.changedRows === 0){
-                    return res.status(404).send({
-                        mensagem: 'Não foi encontrado denunciante com esse id'
-                    })
-
-
-                }
-                
-                const response = {
-                    mensagem : 'Denuncia atualizado com sucesso',
-                    denuncianteAtualizado: {
-                        denuncianteID: req.body.denuncianteID,
-                        nome: req.body.nome,
-                        senha: req.body.senha,
-                        login: req.body.login,
-                        request: {
-                            tipo: 'GET',
-                            descricao: 'Retorna todos os denunciantes',
-                            url: 'http://localhost:3000/denunciante'+ req.body.denuncianteID
+                if(results.length > 0){
+                    res.status(409).send({mensagem: 'Atendente email já cadastrado '})
+                }else{
+                    bcrypt.hash(req.body.senha, 10, (errBcrypt, hash) => {
+                        if(errBcrypt){
+                            return res.status(500).send({error: errBcrypt})
                         }
-                    }
-                }
-
-                return res.status(202).send(response);
-
+                        conn.query(
+                            'UPDATE Denunciante SET email = ?, senha = ? WHERE denuncianteID = ?',
+                            [req.body.email, hash, req.body.denuncianteID],
+                            (error, result) =>{
+                                conn.release();
+                                if(error){
+                                    return res.status(500).send({
+                                        error: error,
+                                        response: null
                 
-            }) 
+                                    });
+                                }
+                                console.log(result.changedRows);
+                                if(result.changedRows === 0){
+                                    return res.status(404).send({
+                                        mensagem: 'Não foi encontrado denunciante com esse id'
+                                    })
+                
+                
+                                }
+                                
+                                const response = {
+                                    mensagem : 'Denunciante atualizado com sucesso',
+                                    denuncianteAtualizado: {
+                                        denuncianteID: req.body.denuncianteID,
+                                        email: req.body.email,
+                                        senha: req.body.senha,
+                                        
+                                        request: {
+                                            tipo: 'GET',
+                                            descricao: 'Retorna todos os de talahes  de um denunciante',
+                                            url: 'http://localhost:3000/denunciante'+ req.body.denuncianteID
+                                        }
+                                    }
+                                }
+                
+                                return res.status(202).send(response);
+                                
+                                
+            
+                                
+            
+                            })
+            
+                    });
+
+                }
+            })
+
         
-    })
+    
+        
+        
+    });
 });
 
 router.delete('/', (req, res, next) =>{
@@ -232,7 +268,7 @@ router.delete('/', (req, res, next) =>{
                         body: {
                             nome: 'String',
                             senha: 'String',
-                            login: 'String'
+                            email: 'String'
                         }
                     }
                 }
@@ -241,6 +277,55 @@ router.delete('/', (req, res, next) =>{
             }) 
         
     })
+});
+
+router.post('/login', (req, res, next) => {
+   
+    mysql.getConnection((error, conn)=>{
+        if(error){
+            return res.status(500).send({error: error})
+        }
+
+        const query = 'SELECT * FROM Denunciante WHERE email = ?';
+
+        conn.query(query, [req.body.email],(error, results ,fields) =>{
+            conn.release();
+
+            if(error){return res.status(500).send({error: error})}
+
+            if(results.length < 1){
+                return res.status(401).send({mensagem: 'Falha na autenticação'})
+
+            }
+            bcrypt.compare(req.body.senha, results[0].senha, (err, result) => {
+
+                if(err){
+                    return res.status(401).send({ mensagem: 'Falha na autenticação'})
+
+                }
+
+                if(result){
+                    const token = jwt.sign({
+                        denuncianteID: results[0].denuncianteID,
+                        email: results[0].email
+                    },
+                     process.env.JWT_KEY,
+                     {
+                        expiresIn: "1h"
+                     });
+
+                    return res.status(200).send({
+                        mensagem: 'Autenticado com sucesso',
+                        token: token
+                    });
+                }
+                return res.status(401).send({ mensagem: 'Falha na autenticação'})
+            });
+
+
+        });
+        
+    });
 });
 
 module.exports = router;

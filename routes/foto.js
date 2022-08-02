@@ -178,7 +178,7 @@ router.get('/:id', (req, res, next) =>{
 });
 
 //Altera um denunciante 
-router.patch('/', (req, res, next) =>{
+router.patch('/', upload.single('foto_imagem'), (req, res, next) =>{
     mysql.getConnection((error, conn)=>{
 
         if(error){
@@ -216,8 +216,8 @@ router.patch('/', (req, res, next) =>{
                        
                         request: {
                             tipo: 'GET',
-                            descricao: 'Retorna todos as fotos',
-                            url: 'http://localhost:3000/denunciante'+ req.body.id
+                            descricao: 'Retorna todos os detalhes de uma foto',
+                            url: 'http://localhost:3000/foto/' + req.body.id
                         }
                     }
                 }
@@ -240,8 +240,8 @@ router.delete('/', (req, res, next) =>{
         
         conn.query(
            
-            'DELETE FROM Denunciante WHERE denuncianteID = ?',
-            [req.body.denuncianteID],
+            'DELETE FROM Foto WHERE id = ?',
+            [req.body.id],
             (error, resultado, field) => {
                 conn.release();
 
@@ -257,12 +257,12 @@ router.delete('/', (req, res, next) =>{
                     mensagem: 'Denunciante removido com sucesso',
                     request: {
                         tipo: 'POST',
-                        descricao: 'Insere um denunciante',
-                        url: 'http://localhost:3000/denunciante', 
+                        descricao: 'Insere uma foto',
+                        url: 'http://localhost:3000/foto', 
                         body: {
-                            nome: 'String',
-                            senha: 'String',
-                            login: 'String'
+                            id: 'String',
+                            denuncia: 'String',
+                            imagem_denuncia: 'String'
                         }
                     }
                 }

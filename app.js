@@ -7,6 +7,7 @@ const rotaDenunciante = require('./routes/denunciante');
 const rotaDenuncia = require('./routes/denuncia');
 const rotaNomeDenunciado = require('./routes/nomeDenunciado');
 const rotaFoto = require('./routes/foto');
+const rotaAtendente = require('./routes/atendente');
 
 app.use(morgan('dev'));
 app.use('/uploads', express.static('uploads'));
@@ -32,6 +33,7 @@ app.use('/denunciante', rotaDenunciante);
 app.use('/denuncia', rotaDenuncia);
 app.use('/nomeDenunciado', rotaNomeDenunciado);
 app.use('/foto', rotaFoto);
+app.use('/atendente', rotaAtendente);
 
 app.use((req, res, next)=>{ 
     const erro = new Error('Não encontrada');
