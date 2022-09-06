@@ -14,6 +14,8 @@ router.get('/:id', login.atendente, DenunciaController.getUmaDenuncia);
 
 router.patch('/', login.atendente, DenunciaController.pathDenuncia);
 
-router.delete('/', DenunciaController.deleteDenuncia);
+router.delete('/', login.obrigatorio, DenunciaController.deleteDenuncia);
+
+
 
 module.exports = router;

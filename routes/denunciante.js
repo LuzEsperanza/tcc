@@ -13,7 +13,7 @@ router.post('/cadastro', DenuncianteController.postDenunciante);
 
 router.get('/:denuncianteID', login.obrigatorio, DenuncianteController.getUmDenunciante);
 
-router.patch('/', login.obrigatorio, DenuncianteController.ptchDenunciante);
+router.patch('/', login.obrigatorio, DenuncianteController.patchDenunciante);
 
 router.delete('/', login.obrigatorio, DenuncianteController.deleteDenunciante);
 

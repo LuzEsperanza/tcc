@@ -8,6 +8,11 @@ const rotaDenuncia = require('./routes/denuncia');
 const rotaNomeDenunciado = require('./routes/nomeDenunciado');
 const rotaFoto = require('./routes/foto');
 const rotaAtendente = require('./routes/atendente');
+const rotaRealiza = require('./routes/realiza');
+const rotaAnalisa = require('./routes/analisa');
+const rotaCrimeAmbiental = require('./routes/crimeAmbiental');
+const rotaBusca = require('./routes/busca');
+const rotaPertence = require('./routes/pertence')
 
 app.use(morgan('dev'));
 app.use('/uploads', express.static('uploads'));
@@ -34,6 +39,12 @@ app.use('/denuncia', rotaDenuncia);
 app.use('/nomeDenunciado', rotaNomeDenunciado);
 app.use('/foto', rotaFoto);
 app.use('/atendente', rotaAtendente);
+app.use('/realiza', rotaRealiza);
+app.use('/analisa', rotaAnalisa);
+app.use('/crimeAmbiental', rotaCrimeAmbiental);
+app.use('/busca', rotaBusca);
+app.use('/pertence', rotaPertence);
+
 
 app.use((req, res, next)=>{ 
     const erro = new Error('Não encontrada');

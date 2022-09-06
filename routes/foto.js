@@ -38,11 +38,11 @@ const FotoController = require('../controllers/foto-controller');
 
 router.get('/', FotoController.getFoto);
 
-router.post('/', upload.single('foto_imagem'), FotoController.postFoto);
+router.post('/', login.obrigatorio, upload.single('foto_imagem'), FotoController.postFoto);
 
 router.get('/:id', FotoController.getUmaFoto);
 
-router.patch('/', upload.single('foto_imagem'), FotoController.pathFoto);
+router.patch('/',login.obrigatorio, upload.single('foto_imagem'), FotoController.pathFoto);
 
 router.delete('/', login.obrigatorio, FotoController.deleteFoto);
 
