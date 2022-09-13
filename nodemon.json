@@ -1,7 +1,7 @@
 {
     "env": {
-        "MYSQL_USER" : "root",
-        "MYSQL_PASSWORD" : "claudineyjunior",
+        "MYSQL_USER" : "luz",
+        "MYSQL_PASSWORD" : "12345678",
         "MYSQL_DATABASE" : "butterfly",
         "MYSQL_HOST" : "localhost",
         "MYSQL_PORT" : 3306,

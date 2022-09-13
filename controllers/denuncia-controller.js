@@ -91,7 +91,7 @@ exports.postDenuncia = async (req, res, next)=>{
 
         const response = {
             mensagem: 'Denuncia inserida com sucesso',
-                denunciaAtualizado :{
+                denuncia :{
                     id: result.id,
                     descricao: req.body.descricao,
                     horarioAbordagem: req.body.horarioAbordagem,
