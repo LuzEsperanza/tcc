@@ -21,7 +21,7 @@ exports.getDenunciante = async (req, res, next) =>{
                 }
             })
         }
-        res.status(200).send(response);
+        res.status(200).send(response.denunciante);
 
    }catch(error){
         return res.status(500).send({error: error})
@@ -51,7 +51,7 @@ exports.getDenunciante = async (req, res, next) =>{
         const result = await mysql.execute(query, [ req.body.nome, req.body.email, hash ]);
         const response = {
             mensagem: 'Denunciante criado com sucesso',
-            denuncianteAtualizado :{
+            denunciante :{
                 id: result.id,
                 nome: req.body.nome,
                 email: req.body.email,
@@ -64,7 +64,7 @@ exports.getDenunciante = async (req, res, next) =>{
                 }
             }
         }
-         return res.status(201).send(response);
+         return res.status(201).send(response.denunciante);
 
 
     }catch(error){
@@ -81,7 +81,7 @@ exports.getUmDenunciante = async (req, res, next) =>{
 
         if (result.length == 0) {
             return res.status(404).send({
-                message: 'Não foi encontrado produto com este ID'
+                message: 'Não foi encontrado denunciante com este ID'
             })
         }
 
@@ -103,7 +103,7 @@ exports.getUmDenunciante = async (req, res, next) =>{
         
                        
         
-        return   res.status(200).send(response);
+        return   res.status(200).send(response.denunciante);
 
 
     } catch (error) {
@@ -197,6 +197,7 @@ exports.loginDenunciante = async (req, res, next) => {
             }
 
             if(result){
+               
                 const token = jwt.sign({
                     denuncianteID: results[0].denuncianteID,
                     email: results[0].email
@@ -205,16 +206,20 @@ exports.loginDenunciante = async (req, res, next) => {
                  {
                     expiresIn: "1h"
                  });
-
-                return res.status(200).send({
+                const response = {
                     mensagem: 'Autenticado com sucesso',
-                    token: token
-                });
+                    token: token,
+                    denunciante: {
+                        denuncianteID: results[0].denuncianteID,
+                    }
+
+                 }
+                return res.status(200).send(response.denunciante);
             }
-            return res.status(401).send({ mensagem: 'Falha na autenticação'});
+            return res.status(401).send(res);
         })
     }catch(error){
-        return res.status(500).send({ message: 'Falha na autenticação' });
+        return res.status(500).send(res);
     }
    
    

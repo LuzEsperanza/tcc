@@ -11,7 +11,7 @@ router.get('/', DenuncianteController.getDenunciante);
 
 router.post('/cadastro', DenuncianteController.postDenunciante);
 
-router.get('/:denuncianteID', login.obrigatorio, DenuncianteController.getUmDenunciante);
+router.get('/:denuncianteID', DenuncianteController.getUmDenunciante);
 
 router.patch('/', login.obrigatorio, DenuncianteController.patchDenunciante);
 

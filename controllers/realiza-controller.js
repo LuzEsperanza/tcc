@@ -8,9 +8,10 @@ exports.getRealiza = async (req, res, next) =>{
              quantidade: result.length,
              realiza: result.map( reali => {
                  return {
-                    id: result.id,
+                    id: reali.id,
                     denunciante: req.denunciante.denuncianteID,
-                    denuncia: req.params.id_denuncia,
+                    denuncia: reali.denuncia,
+                    horaDenuncia : reali.horaDenuncia,
                     request: {
                          tipo: 'GET', 
                          descricao: 'Retorna todos os detalhes um denunciante espefico', 
@@ -38,6 +39,7 @@ exports.postRealiza = async (req, res, next)=>{
         const query = 'INSERT INTO Realiza (denunciante, denuncia) VALUES (?,?)';
         const result = await mysql.execute(query, [ req.denunciante.denuncianteID, req.params.id_denuncia]);
         const response = {
+            
             mensagem: 'Realiza criado com sucesso',
             denuncianteAtualizado :{
                 id: result.id,

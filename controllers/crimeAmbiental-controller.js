@@ -19,7 +19,7 @@ exports.getCrimeAmbiental = async (req, res, next) =>{
                         }
                     })
                 }
-                res.status(200).send(response);
+                res.status(200).send(response.crimeAmbiental);
 
     }catch(error){
         return res.status(500).send({error: error});

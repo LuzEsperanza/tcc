@@ -4,44 +4,28 @@ exports.getDenuncia =  async (req, res, next) =>{
     try{
         const result = await mysql.execute(`SELECT Denuncia.id,
             Denuncia.descricao, 
-            Denuncia.veracidade,
-            Denuncia.horarioAbordagem,
-            Denuncia.nomeDenunciado,
-            Denuncia.estado,
-            Denuncia.cidade,
-            Denuncia.rua,
-            Denuncia.numero,
-            Denuncia.bairro,
-            Denuncia.cep,
-            Denuncia.geometria,
+            Denuncia.horaDenuncia,
             Denuncia.encaminhado,
             Denuncia.condicao,
                         
-            NomeDenunciado.nomeDenunciado
-            FROM Denuncia
-        INNER JOIN NomeDenunciado 
-            ON NomeDenunciado.id = Denuncia.nomeDenunciado;`)
+            CrimeAmbiental.titulo
+            FROM Pertence
+        INNER JOIN Denuncia 
+            ON Denuncia.id = Pertence.denuncia 
+        INNER JOIN CrimeAmbiental 
+            ON Pertence.crimeAmbiental = CrimeAmbiental.id;`)
         const response = {
             quantidade: result.length,
             denuncia: result.map( denunc => {
                 return {
                     id: denunc.id,
                     descricao: denunc.descricao,
-                    veracidade: denunc.veracidade,
-                    horarioAbordagem: denunc.horarioAbordagem,
-                    anonima: denunc.anonima,
-                    estado: denunc.estado,
-                    cidade: denunc.cidade,
-                    rua: denunc.rua,
-                    numero: denunc.numero,
-                    bairro: denunc.bairro,
-                    cep: denunc.cep,
-                    geometria: denunc.geometria,
+                    horaDenuncia: denunc.horaDenuncia,
                     encaminhado: denunc.encaminhado,
                     condicao: denunc.condicao,
                                                 
-                    NomeDenunciado: {
-                        nomeDenunciado: denunc.nomeDenunciado,
+                    CrimeAmbiental: {
+                        tilulo: denunc.titulo,
                     
                     },                            
                                                 
@@ -53,7 +37,7 @@ exports.getDenuncia =  async (req, res, next) =>{
                 }
             })
         }
-        res.status(200).send(response);
+        res.status(200).send(response.denuncia);
 
     
 
@@ -74,17 +58,15 @@ exports.postDenuncia = async (req, res, next)=>{
             return res.status(404).send({ message: 'Não foi encontrado nome Denunciado com esse id'});
         }
         
-        const query = 'INSERT INTO Denuncia (descricao, horarioAbordagem , nomeDenunciado, estado, cidade, rua, numero, bairro, cep, geometria) VALUES (?,?,?,?,?,?,?,?,?,?)';
+        const query = 'INSERT INTO Denuncia (descricao, horarioAbordagem , rua, numero, complemento, geometria) VALUES (?,?,?,?,?,?)';
         const result = await mysql.execute(query, [ 
             req.body.descricao,
             req.body.horarioAbordagem,
-            req.body.nomeDenunciado,
-            req.body.estado,
-            req.body.cidade,
+            
+            
             req.body.rua,
             req.body.numero,
-            req.body.bairro,
-            req.body.cep,
+            req.body.complemento,
             req.body.geometria,
                 
         ]);
@@ -95,13 +77,12 @@ exports.postDenuncia = async (req, res, next)=>{
                     id: result.id,
                     descricao: req.body.descricao,
                     horarioAbordagem: req.body.horarioAbordagem,
-                    nomeDenunciado: req.body.nomeDenunciado,
-                    estado: req.body.estado,
-                    cidade: req.body.cidade,
+                    
+                    complemento: req.body.complemento,
+                    
                     rua: req.body.rua,
                     numero: req.body.numero,
-                    bairro: req.body.bairro,
-                    cep: req.body.cep,
+                    
                     geometria: req.body.geometria,
                                 
                     request: {

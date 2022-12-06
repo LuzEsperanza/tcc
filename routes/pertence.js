@@ -6,6 +6,6 @@ const PertenceController = require('../controllers/pertence-controller');
 
 
 
-router.post('/', login.obrigatorio, PertenceController.postPertence);
+router.post('/',  PertenceController.postPertence);
 
 module.exports = router;

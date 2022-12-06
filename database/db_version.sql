@@ -40,23 +40,22 @@ CREATE TABLE IF NOT EXISTS NomeDenunciado(
 );
 CREATE TABLE IF NOT EXISTS Denuncia (
   id MEDIUMINT NOT NULL AUTO_INCREMENT,
+  denunciante MEDIUMINT,
+  horaDenuncia TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   descricao TEXT,
   veracidade BOOLEAN,
   horarioAbordagem TIME,
-  nomeDenunciado MEDIUMINT NOT NULL,
+  nomeDenunciado MEDIUMINT,
   anonima INT,
-  estado VARCHAR(30) NOT NULL,
-  cidade VARCHAR(30) NOT NULL,
   rua VARCHAR(30) NOT NULL,
   numero INT NOT NULL,
-  bairro VARCHAR(30) NOT NULL,
-  cep VARCHAR(9) NOT NULL,
   geometria DECIMAL,
   encaminhado VARCHAR(30),
   condicao VARCHAR(20),
    PRIMARY KEY (id),
   FOREIGN KEY (nomeDenunciado) REFERENCES NomeDenunciado(id) 
-  ON DELETE NO ACTION
+  ON DELETE NO ACTION,
+  FOREIGN KEY (denunciante) REFERENCES Denunciante(denuncianteID) ON DELETE NO ACTION
   
  
 ) ;
@@ -71,16 +70,7 @@ CREATE TABLE IF NOT EXISTS Foto (
 );
 
 
-CREATE TABLE IF NOT EXISTS Realiza(
-id MEDIUMINT NOT NULL AUTO_INCREMENT,
-denunciante MEDIUMINT NOT NULL , 
-denuncia MEDIUMINT NOT NULL ,
-horaDenuncia TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-PRIMARY KEY(id),
-FOREIGN KEY (denunciante) REFERENCES Denunciante(denuncianteID) ON DELETE NO ACTION,
-FOREIGN KEY (denuncia) REFERENCES Denuncia(id) ON DELETE NO ACTION
 
-);
 CREATE TABLE IF NOT EXISTS Analisa(
   id MEDIUMINT NOT NULL AUTO_INCREMENT,
   atendente MEDIUMINT NOT NULL, 
@@ -99,3 +89,6 @@ CREATE TABLE IF NOT EXISTS Pertence(
   FOREIGN KEY (denuncia) REFERENCES Denuncia(id)
   
 ); 
+
+ALTER TABLE `Pertence` ADD CONSTRAINT `fk_crimeAmbiental` FOREIGN KEY ( `crimeAmbiental` ) REFERENCES `CrimeAmbiental` ( `id` ); 
+ALTER TABLE `Pertence` ADD CONSTRAINT `fk_denuncia` FOREIGN KEY ( `denuncia` ) REFERENCES `Denuncia` ( `id` ); 
