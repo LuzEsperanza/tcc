@@ -8,7 +8,7 @@ const rotaDenuncia = require('./routes/denuncia');
 const rotaNomeDenunciado = require('./routes/nomeDenunciado');
 const rotaFoto = require('./routes/foto');
 const rotaAtendente = require('./routes/atendente');
-const rotaRealiza = require('./routes/realiza');
+const rotaAnonimo = require('./routes/anonimo')
 const rotaAnalisa = require('./routes/analisa');
 const rotaCrimeAmbiental = require('./routes/crimeAmbiental');
 const rotaBusca = require('./routes/busca');
@@ -39,7 +39,7 @@ app.use('/denuncia', rotaDenuncia);
 app.use('/nomeDenunciado', rotaNomeDenunciado);
 app.use('/foto', rotaFoto);
 app.use('/atendente', rotaAtendente);
-app.use('/realiza', rotaRealiza);
+app.use('/anonimo', rotaAnonimo);
 app.use('/analisa', rotaAnalisa);
 app.use('/crimeAmbiental', rotaCrimeAmbiental);
 app.use('/busca', rotaBusca);

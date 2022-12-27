@@ -2,23 +2,28 @@ const mysql = require('../mysql');
 
 exports.getDenuncia =  async (req, res, next) =>{
     try{
-        const result = await mysql.execute(`SELECT Denuncia.id,
-            Denuncia.descricao, 
-            Denuncia.horaDenuncia,
-            Denuncia.encaminhado,
-            Denuncia.condicao,
-                        
-            CrimeAmbiental.titulo
-            FROM Pertence
-        INNER JOIN Denuncia 
-            ON Denuncia.id = Pertence.denuncia 
-        INNER JOIN CrimeAmbiental 
-            ON Pertence.crimeAmbiental = CrimeAmbiental.id;`)
+        const query = `SELECT Denuncia.id,
+                                Denuncia.denunciante,
+                                Denuncia.descricao, 
+                                Denuncia.horaDenuncia,
+                                Denuncia.encaminhado,
+                                Denuncia.condicao,
+                     
+                                CrimeAmbiental.titulo
+                        FROM Pertence
+                            INNER JOIN Denuncia 
+                             ON Denuncia.id = Pertence.denuncia 
+                            INNER JOIN CrimeAmbiental 
+                              ON Pertence.crimeAmbiental = CrimeAmbiental.id
+                        WHERE Denuncia.denunciante = ?;
+         `
+        const result = await mysql.execute(query, [req.params.denunciante])
         const response = {
             quantidade: result.length,
             denuncia: result.map( denunc => {
                 return {
                     id: denunc.id,
+                    denunciante: denunc.denunciante,
                     descricao: denunc.descricao,
                     horaDenuncia: denunc.horaDenuncia,
                     encaminhado: denunc.encaminhado,
@@ -58,8 +63,9 @@ exports.postDenuncia = async (req, res, next)=>{
             return res.status(404).send({ message: 'Não foi encontrado nome Denunciado com esse id'});
         }
         
-        const query = 'INSERT INTO Denuncia (descricao, horarioAbordagem , rua, numero, complemento, geometria) VALUES (?,?,?,?,?,?)';
+        const query = 'INSERT INTO Denuncia (denunciante, descricao, horarioAbordagem , rua, numero, complemento) VALUES (?,?,?,?,?,?)';
         const result = await mysql.execute(query, [ 
+            req.body.denunciante,
             req.body.descricao,
             req.body.horarioAbordagem,
             
@@ -67,14 +73,14 @@ exports.postDenuncia = async (req, res, next)=>{
             req.body.rua,
             req.body.numero,
             req.body.complemento,
-            req.body.geometria,
-                
+           
         ]);
 
         const response = {
             mensagem: 'Denuncia inserida com sucesso',
                 denuncia :{
                     id: result.id,
+                    denunciante: req.body.denunciante,
                     descricao: req.body.descricao,
                     horarioAbordagem: req.body.horarioAbordagem,
                     
