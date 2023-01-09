@@ -63,17 +63,16 @@ exports.postDenuncia = async (req, res, next)=>{
             return res.status(404).send({ message: 'Não foi encontrado nome Denunciado com esse id'});
         }
         
-        const query = 'INSERT INTO Denuncia (denunciante, descricao, horarioAbordagem , rua, numero, complemento) VALUES (?,?,?,?,?,?)';
+        const query = 'INSERT INTO Denuncia (denunciante, descricao, horarioAbordagem , rua, numero, complemento,longitude, latitude) VALUES (?,?,?,?,?,?,?,?)';
         const result = await mysql.execute(query, [ 
             req.body.denunciante,
             req.body.descricao,
             req.body.horarioAbordagem,
-            
-            
             req.body.rua,
             req.body.numero,
             req.body.complemento,
-           
+            req.body.longitude,
+            req.body.longitude
         ]);
 
         const response = {
