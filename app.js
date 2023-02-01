@@ -5,7 +5,7 @@ const bodyParser = require('body-parser');
 
 const rotaDenunciante = require('./routes/denunciante');
 const rotaDenuncia = require('./routes/denuncia');
-const rotaNomeDenunciado = require('./routes/nomeDenunciado');
+
 const rotaFoto = require('./routes/foto');
 const rotaAtendente = require('./routes/atendente');
 const rotaAnonimo = require('./routes/anonimo')
@@ -36,7 +36,7 @@ app.use((req, res, next)=>{
 
 app.use('/denunciante', rotaDenunciante);
 app.use('/denuncia', rotaDenuncia);
-app.use('/nomeDenunciado', rotaNomeDenunciado);
+
 app.use('/foto', rotaFoto);
 app.use('/atendente', rotaAtendente);
 app.use('/anonimo', rotaAnonimo);

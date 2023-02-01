@@ -49,6 +49,7 @@ exports.getDenunciante = async (req, res, next) =>{
         
         const query = 'INSERT INTO Denunciante (nome, email, senha) VALUES (?,?,?)';
         const result = await mysql.execute(query, [ req.body.nome, req.body.email, hash ]);
+        console.log(result)
         const response = {
             mensagem: 'Denunciante criado com sucesso',
             denunciante :{

@@ -9,8 +9,8 @@ exports.getCrimeAmbiental = async (req, res, next) =>{
                     quantidade: result.length,
                     crimeAmbiental: result.map( crime => {
                         return {
-                            id: crime.id,
-                            titulo: crime.titulo,
+                            id: crime.result.id,
+                            titulo: crime.result.titulo,
                             request: {
                                 tipo: 'GET', 
                                 descricao: 'Retorna um crime ambiental', 

@@ -38,7 +38,7 @@ const FotoController = require('../controllers/foto-controller');
 
 router.get('/', FotoController.getFoto);
 
-router.post('/', login.obrigatorio, upload.single('foto_imagem'), FotoController.postFoto);
+router.post('/', upload.single('foto_imagem'), FotoController.postFoto);
 
 router.get('/:id', FotoController.getUmaFoto);
 

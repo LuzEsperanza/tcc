@@ -33,11 +33,7 @@ CREATE TABLE  IF NOT EXISTS CrimeAmbiental(
   PRIMARY KEY (id)
 );
 
-CREATE TABLE IF NOT EXISTS NomeDenunciado( 
-  id MEDIUMINT NOT NULL AUTO_INCREMENT,
-  nomeDenunciado VARCHAR(100),
-  PRIMARY KEY(id)
-);
+
 CREATE TABLE IF NOT EXISTS Denuncia (
   id MEDIUMINT NOT NULL AUTO_INCREMENT,
   denunciante MEDIUMINT,
@@ -45,7 +41,7 @@ CREATE TABLE IF NOT EXISTS Denuncia (
   descricao TEXT,
   veracidade BOOLEAN,
   horarioAbordagem TIME,
-  nomeDenunciado MEDIUMINT,
+  informacaoDenunciado TEXT,
   anonima INT,
   rua VARCHAR(30) NOT NULL,
   numero INT NOT NULL,
@@ -54,8 +50,6 @@ CREATE TABLE IF NOT EXISTS Denuncia (
   encaminhado VARCHAR(30),
   condicao VARCHAR(20),
    PRIMARY KEY (id),
-  FOREIGN KEY (nomeDenunciado) REFERENCES NomeDenunciado(id) 
-  ON DELETE NO ACTION,
   FOREIGN KEY (denunciante) REFERENCES Denunciante(denuncianteID) ON DELETE NO ACTION
   
  

@@ -56,23 +56,19 @@ exports.getDenuncia =  async (req, res, next) =>{
 
 exports.postDenuncia = async (req, res, next)=>{
     try{
-        const queryNomeDenunciado = 'SELECT * FROM NomeDenunciado WHERE id = ?';
-        const resultNomeDenunciado = await mysql.execute(queryNomeDenunciado, [req.body.id]);
-
-        if (resultNomeDenunciado.length > 0) {
-            return res.status(404).send({ message: 'Não foi encontrado nome Denunciado com esse id'});
-        }
         
-        const query = 'INSERT INTO Denuncia (denunciante, descricao, horarioAbordagem , rua, numero, complemento,longitude, latitude) VALUES (?,?,?,?,?,?,?,?)';
+        
+        const query = 'INSERT INTO Denuncia (denunciante, descricao, horarioAbordagem , rua, numero,longitude, latitude, informacaoDenunciado) VALUES (?,?,?,?,?,?,?,?)';
         const result = await mysql.execute(query, [ 
             req.body.denunciante,
             req.body.descricao,
             req.body.horarioAbordagem,
             req.body.rua,
             req.body.numero,
-            req.body.complemento,
+           
             req.body.longitude,
-            req.body.longitude
+            req.body.longitude,
+            req.body.informacaoDenunciado
         ]);
 
         const response = {
@@ -83,12 +79,14 @@ exports.postDenuncia = async (req, res, next)=>{
                     descricao: req.body.descricao,
                     horarioAbordagem: req.body.horarioAbordagem,
                     
-                    complemento: req.body.complemento,
+                    
                     
                     rua: req.body.rua,
                     numero: req.body.numero,
+                    longitude: req.body.longitude,
+                    latitude: req.body.latitude,
+                    informacaoDenunciado: req.body.informacaoDenunciado,
                     
-                    geometria: req.body.geometria,
                                 
                     request: {
                         tipo: 'GET', 
@@ -126,14 +124,12 @@ exports.getUmaDenuncia = async (req, res, next) =>{
                 descricao: result[0].descricao,
                 veracidade: result[0].veracidade,
                 horarioAbordagem: result[0].horarioAbordagem,
-                nomeDenunciado: result[0].nomeDenunciado,
-                estado: result[0].estado,
-                cidade: result[0].cidade,
+                informacaoDenunciado: result[0].informacaoDenunciado,
+               
                 rua: result[0].rua,
                 numero: result[0].numero,
-                bairro: result[0].bairro,
-                cep: result[0].cep,
-                geometria: result[0].geometria,
+                latitude: result[0].latitude,
+                longitude: result[0].longitude,
                 encaminhado: result[0].encaminhado,
                 condicao: result[0].condicao,
                                
@@ -204,7 +200,7 @@ exports.deleteDenuncia = async (req, res, next) =>{
                     descricao: 'String',
                     veracidade: 'Boolean',
                     horarioAbordagem: 'time',
-                    nomeDenunciado: 'String',
+                    informacaoDenunciado: 'String',
                     estado: 'String',
                     cidade: 'String',
                     rua: 'String',

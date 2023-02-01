@@ -14,17 +14,18 @@ exports.anonimo = async (req, res, next) => {
                 expiresIn: "1h"
         });
         const query = 'INSERT INTO Anonimo (token) VALUES (?)';
-        const results = await mysql.execute(query, [token]);
+        const result = await mysql.execute(query, [token]);
         
-        
-            
-            
-            const response = {
-                        mensagem: 'Autenticado com sucesso',
-                        token: token,
-                       
-                     }
-            return res.status(200).send(response);
+        console.log(result)        
+        const response = {
+            mensagem: 'Autenticado com sucesso',
+            // token: token,
+            anonimo: {
+                id: result.insertId,
+            }
+                    
+        }
+        return res.status(200).send(response.anonimo);
 
         
            
