@@ -36,9 +36,9 @@ const login = require('../middleware/login');
 
 const FotoController = require('../controllers/foto-controller');
 
-router.get('/', FotoController.getFoto);
+router.get('/', login.obrigatorio, FotoController.getFoto);
 
-router.post('/', upload.single('foto_imagem'), FotoController.postFoto);
+router.post('/', login.obrigatorio,upload.single('foto_imagem'), FotoController.postFoto);
 
 router.get('/:id', FotoController.getUmaFoto);
 

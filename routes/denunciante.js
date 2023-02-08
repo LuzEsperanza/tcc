@@ -7,13 +7,13 @@ const login = require('../middleware/login');
 
 const DenuncianteController = require('../controllers/denunciante-controller');
 
-router.get('/', DenuncianteController.getDenunciante);
+router.get('/', login.atendente, DenuncianteController.getDenunciante);
 
 router.post('/cadastro', DenuncianteController.postDenunciante);
 
-router.get('/:denuncianteID', DenuncianteController.getUmDenunciante);
+router.get('/:denuncianteID', login.obrigatorio, DenuncianteController.getUmDenunciante);
 
-router.patch('/', login.obrigatorio, DenuncianteController.patchDenunciante);
+router.patch('/:denuncianteID', login.obrigatorio, DenuncianteController.patchDenunciante);
 
 router.delete('/', login.obrigatorio, DenuncianteController.deleteDenunciante);
 

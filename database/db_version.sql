@@ -42,7 +42,7 @@ CREATE TABLE IF NOT EXISTS Denuncia (
   veracidade BOOLEAN,
   horarioAbordagem TIME,
   informacaoDenunciado TEXT,
-  anonima INT,
+  anonima MEDIUMINT,
   rua VARCHAR(30) NOT NULL,
   numero INT NOT NULL,
   longitude DECIMAL,
@@ -50,7 +50,7 @@ CREATE TABLE IF NOT EXISTS Denuncia (
   encaminhado VARCHAR(30),
   condicao VARCHAR(20),
    PRIMARY KEY (id),
-  FOREIGN KEY (denunciante) REFERENCES Denunciante(denuncianteID) ON DELETE NO ACTION
+  
   
  
 ) ;
@@ -87,3 +87,5 @@ CREATE TABLE IF NOT EXISTS Pertence(
 
 ALTER TABLE `Pertence` ADD CONSTRAINT `fk_crimeAmbiental` FOREIGN KEY ( `crimeAmbiental` ) REFERENCES `CrimeAmbiental` ( `id` ); 
 ALTER TABLE `Pertence` ADD CONSTRAINT `fk_denuncia` FOREIGN KEY ( `denuncia` ) REFERENCES `Denuncia` ( `id` ); 
+ALTER TABLE `Denuncia` ADD CONSTRAINT `fk_autor` FOREIGN KEY (`autor`) REFERENCES `Denunciante` (`denuncianteID`);
+ALTER TABLE `Denuncia` ADD CONSTRAINT `fk_anonimo` FOREIGN KEY (`anonima`) REFERENCES `Anonimo` (`id`)

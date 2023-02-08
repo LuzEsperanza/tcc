@@ -128,12 +128,12 @@ exports.patchDenunciante = async (req, res, next) =>{
             await mysql.execute(query, [
                 req.body.email,
                 hash,
-                req.body.denuncianteID
+                req.params.denuncianteID
             ]);
             const response = {
                 mensagem : 'Denunciante atualizado com sucesso',
                 denuncianteAtualizado: {
-                    denuncianteID: req.body.denuncianteID,
+                    denuncianteID: req.params.denuncianteID,
                     email: req.body.email,
                     senha: req.body.senha,
                     
@@ -212,10 +212,11 @@ exports.loginDenunciante = async (req, res, next) => {
                     token: token,
                     denunciante: {
                         denuncianteID: results[0].denuncianteID,
+                        token: token
                     }
 
                  }
-                return res.status(200).send(response.denunciante);
+                return res.status(200).send(response);
             }
             return res.status(401).send(res);
         })

@@ -3,7 +3,7 @@ const mysql = require('../mysql');
 exports.getDenuncia =  async (req, res, next) =>{
     try{
         const query = `SELECT Denuncia.id,
-                                Denuncia.denunciante,
+                                Denuncia.autor,
                                 Denuncia.descricao, 
                                 Denuncia.horaDenuncia,
                                 Denuncia.encaminhado,
@@ -15,15 +15,15 @@ exports.getDenuncia =  async (req, res, next) =>{
                              ON Denuncia.id = Pertence.denuncia 
                             INNER JOIN CrimeAmbiental 
                               ON Pertence.crimeAmbiental = CrimeAmbiental.id
-                        WHERE Denuncia.denunciante = ?;
+                        WHERE Denuncia.autor = ?;
          `
-        const result = await mysql.execute(query, [req.params.denunciante])
+        const result = await mysql.execute(query, [req.params.autor])
         const response = {
             quantidade: result.length,
             denuncia: result.map( denunc => {
                 return {
                     id: denunc.id,
-                    denunciante: denunc.denunciante,
+                    autor: denunc.autor,
                     descricao: denunc.descricao,
                     horaDenuncia: denunc.horaDenuncia,
                     encaminhado: denunc.encaminhado,
@@ -58,9 +58,9 @@ exports.postDenuncia = async (req, res, next)=>{
     try{
         
         
-        const query = 'INSERT INTO Denuncia (denunciante, descricao, horarioAbordagem , rua, numero,longitude, latitude, informacaoDenunciado) VALUES (?,?,?,?,?,?,?,?)';
+        const query = 'INSERT INTO Denuncia (autor, descricao, horarioAbordagem , rua, numero,longitude, latitude, informacaoDenunciado) VALUES (?,?,?,?,?,?,?,?)';
         const result = await mysql.execute(query, [ 
-            req.body.denunciante,
+            req.body.autor,
             req.body.descricao,
             req.body.horarioAbordagem,
             req.body.rua,
@@ -75,7 +75,7 @@ exports.postDenuncia = async (req, res, next)=>{
             mensagem: 'Denuncia inserida com sucesso',
                 denuncia :{
                     id: result.id,
-                    denunciante: req.body.denunciante,
+                    denunciante: req.body.autor,
                     descricao: req.body.descricao,
                     horarioAbordagem: req.body.horarioAbordagem,
                     
