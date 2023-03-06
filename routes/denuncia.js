@@ -6,7 +6,7 @@ const login = require('../middleware/login');
 
 const DenunciaController = require('../controllers/denuncia-controller');
 
-router.get('/:denunciante', login.obrigatorio, DenunciaController.getDenuncia);
+router.get('/:identificado', login.obrigatorio, DenunciaController.getDenuncia);
 
 router.post('/',  login.obrigatorio, DenunciaController.postDenuncia);
 

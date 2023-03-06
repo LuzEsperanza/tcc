@@ -36,7 +36,7 @@ CREATE TABLE  IF NOT EXISTS CrimeAmbiental(
 
 CREATE TABLE IF NOT EXISTS Denuncia (
   id MEDIUMINT NOT NULL AUTO_INCREMENT,
-  denunciante MEDIUMINT,
+  identificado MEDIUMINT,
   horaDenuncia TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   descricao TEXT,
   veracidade BOOLEAN,
@@ -49,8 +49,9 @@ CREATE TABLE IF NOT EXISTS Denuncia (
   latitude DECIMAL,
   encaminhado VARCHAR(30),
   condicao VARCHAR(20),
-   PRIMARY KEY (id),
-  
+  PRIMARY KEY (id),
+  FOREIGN KEY (identificado) REFERENCES Denunciante(denuncianteID),
+  FOREIGN KEY (anonima) REFERENCES Anonimo(id)
   
  
 ) ;
@@ -85,7 +86,3 @@ CREATE TABLE IF NOT EXISTS Pertence(
   
 ); 
 
-ALTER TABLE `Pertence` ADD CONSTRAINT `fk_crimeAmbiental` FOREIGN KEY ( `crimeAmbiental` ) REFERENCES `CrimeAmbiental` ( `id` ); 
-ALTER TABLE `Pertence` ADD CONSTRAINT `fk_denuncia` FOREIGN KEY ( `denuncia` ) REFERENCES `Denuncia` ( `id` ); 
-ALTER TABLE `Denuncia` ADD CONSTRAINT `fk_autor` FOREIGN KEY (`autor`) REFERENCES `Denunciante` (`denuncianteID`);
-ALTER TABLE `Denuncia` ADD CONSTRAINT `fk_anonimo` FOREIGN KEY (`anonima`) REFERENCES `Anonimo` (`id`)

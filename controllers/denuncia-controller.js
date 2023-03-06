@@ -3,7 +3,7 @@ const mysql = require('../mysql');
 exports.getDenuncia =  async (req, res, next) =>{
     try{
         const query = `SELECT Denuncia.id,
-                                Denuncia.autor,
+                                Denuncia.identificado,
                                 Denuncia.descricao, 
                                 Denuncia.horaDenuncia,
                                 Denuncia.encaminhado,
@@ -15,15 +15,16 @@ exports.getDenuncia =  async (req, res, next) =>{
                              ON Denuncia.id = Pertence.denuncia 
                             INNER JOIN CrimeAmbiental 
                               ON Pertence.crimeAmbiental = CrimeAmbiental.id
-                        WHERE Denuncia.autor = ?;
+                        WHERE Denuncia.identificado = ?;
          `
-        const result = await mysql.execute(query, [req.params.autor])
+        const result = await mysql.execute(query, [req.params.identificado])
+        console.log(req.params.identificado)
         const response = {
             quantidade: result.length,
             denuncia: result.map( denunc => {
                 return {
                     id: denunc.id,
-                    autor: denunc.autor,
+                    identificado: denunc.identificado,
                     descricao: denunc.descricao,
                     horaDenuncia: denunc.horaDenuncia,
                     encaminhado: denunc.encaminhado,
@@ -58,24 +59,24 @@ exports.postDenuncia = async (req, res, next)=>{
     try{
         
         
-        const query = 'INSERT INTO Denuncia (autor, descricao, horarioAbordagem , rua, numero,longitude, latitude, informacaoDenunciado) VALUES (?,?,?,?,?,?,?,?)';
+        const query = 'INSERT INTO Denuncia (identificado, descricao, horarioAbordagem , rua, numero,longitude, latitude, informacaoDenunciado) VALUES (?,?,?,?,?,?,?,?)';
         const result = await mysql.execute(query, [ 
-            req.body.autor,
+            req.body.identificado,
             req.body.descricao,
             req.body.horarioAbordagem,
             req.body.rua,
-            req.body.numero,
-           
+            req.body.numero,           
             req.body.longitude,
-            req.body.longitude,
+            req.body.latitude,
             req.body.informacaoDenunciado
         ]);
+       
 
         const response = {
             mensagem: 'Denuncia inserida com sucesso',
                 denuncia :{
                     id: result.id,
-                    denunciante: req.body.autor,
+                    identificado: req.body.identificado,
                     descricao: req.body.descricao,
                     horarioAbordagem: req.body.horarioAbordagem,
                     

@@ -74,17 +74,14 @@ exports.getFoto = async (req, res, next) =>{
 
         const response = {
             mensagem: 'Foto inserida com sucesso',
-            fotoAtualizado :{
+            foto :{
                 id: result.id,
                 denuncia: req.body.denuncia,
                 imagem_denuncia: req.file.path,
                 
-                request: {
-                    tipo: 'GET', 
-                    descricao: 'Returna todas as fotos', 
-                    url: 'http://localhost:3000/denunciante' 
-                }
-            }
+                
+            },
+            url:`http://10.3.134.187:3000/${req.file.path}`
         }
 
         res.status(201).send(response);

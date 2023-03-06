@@ -205,7 +205,7 @@ exports.loginDenunciante = async (req, res, next) => {
                 },
                  process.env.JWT_KEY,
                  {
-                    expiresIn: "1h"
+                    expiresIn: "1d"
                  });
                 const response = {
                     mensagem: 'Autenticado com sucesso',
