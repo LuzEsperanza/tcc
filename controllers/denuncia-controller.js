@@ -75,7 +75,7 @@ exports.postDenuncia = async (req, res, next)=>{
         const response = {
             mensagem: 'Denuncia inserida com sucesso',
                 denuncia :{
-                    id: result.id,
+                    id: result.insertId,
                     identificado: req.body.identificado,
                     descricao: req.body.descricao,
                     horarioAbordagem: req.body.horarioAbordagem,
@@ -97,7 +97,7 @@ exports.postDenuncia = async (req, res, next)=>{
                 }
         }
         
-        return res.status(201).send(response);
+        return res.status(201).send(response.denuncia);
 
     }catch(error){
         return res.status(500).send({error: error});
