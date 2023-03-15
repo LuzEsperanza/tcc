@@ -2,7 +2,7 @@ const mysql = require('../mysql');
 
 exports.getDenuncia =  async (req, res, next) =>{
     try{
-        const query = `SELECT Denuncia.id,
+        const query = `SELECT Pertence.id,
                                 Denuncia.identificado,
                                 Denuncia.descricao, 
                                 Denuncia.horaDenuncia,
@@ -33,7 +33,11 @@ exports.getDenuncia =  async (req, res, next) =>{
                     CrimeAmbiental: {
                         tilulo: denunc.titulo,
                     
-                    },                            
+                    },
+                    Pertence: {
+                        id: denunc.id,
+                    
+                    },                              
                                                 
                     request: {
                         tipo: 'GET', 

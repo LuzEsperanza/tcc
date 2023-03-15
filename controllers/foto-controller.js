@@ -63,25 +63,26 @@ exports.getFoto = async (req, res, next) =>{
  };
 
  exports.postFoto = async (req, res, next)=>{
-    console.log(req.file.path);
+    // console.log(req.file.path);
 
     try {
         const query = 'INSERT INTO Foto (denuncia, imagem_denuncia) VALUES (?,?)';
         const result = await mysql.execute(query, [
             req.body.denuncia,
-            req.file.path
+            req.body.imagem_denuncia
         ]);
+        // console.log(req.body.imagem_denuncia)
 
         const response = {
             mensagem: 'Foto inserida com sucesso',
             foto :{
                 id: result.id,
                 denuncia: req.body.denuncia,
-                imagem_denuncia: req.file.path,
+                imagem_denuncia: req.body.imagem_denuncia,
                 
                 
             },
-            url:`http://10.3.134.187:3000/${req.file.path}`
+            url:`http://192.168.137.232:3000/${req.body.imagem_denuncia}`
         }
 
         res.status(201).send(response);
