@@ -1,6 +1,7 @@
 const mysql = require('../mysql');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const nodemailer = require('nodemailer')
 
 exports.getDenunciante = async (req, res, next) =>{
    try{
@@ -65,6 +66,29 @@ exports.getDenunciante = async (req, res, next) =>{
                 }
             }
         }
+        var transport = nodemailer.createTransport({
+            host: "sandbox.smtp.mailtrap.io",
+            port: 2525,
+            auth: {
+              user: "445bfd21d1ac51",
+              pass: "8b59c21c49fbd6"
+            }
+          });
+        var message = {
+            from: "butterfly@butterfly.com.br",
+            to: req.body.email,
+            subject: "Seu email foi cadastrado",
+            text: "Parabéns pelo seu cadastro",
+            html: "<p>Bora denunciar</p>"
+        };
+        transport.sendMail(message, function (err){
+            if(err)return res.status(400).json({
+                erro: true,
+                message: "E-mail não enviado"
+            });
+        })
+          
+          
          return res.status(201).send(response.denunciante);
 
 
