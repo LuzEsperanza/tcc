@@ -63,33 +63,38 @@ exports.getFoto = async (req, res, next) =>{
  };
 
  exports.postFoto = async (req, res, next)=>{
-    // console.log(req.file.path);
+    console.log(req.files)
+    
+   
+   
+        
+        try {
+            // console.log(req.body.denuncia)
+            const images = req.files.map((imagem) => imagem.filename);
+    const denuncia = req.body.denuncia;
+    
+    // Insere as informações no banco de dados
+    const query = 'INSERT INTO Foto (denuncia, imagem_denuncia) VALUES (?, ?)';
+    const result = await mysql.execute(query, [denuncia, images[0]]);
 
-    try {
-        const query = 'INSERT INTO Foto (denuncia, imagem_denuncia) VALUES (?,?)';
-        const result = await mysql.execute(query, [
-            req.body.denuncia,
-            req.body.imagem_denuncia
-        ]);
-        // console.log(req.body.imagem_denuncia)
+    const response = {
+      mensagem: 'Foto inserida com sucesso',
+      foto: {
+        id: result.id,
+        denuncia: denuncia,
+        imagem_denuncia: images[0]
+      },
+      url: `http://192.168.1.103:3000/${images[0]}`
+    }
 
-        const response = {
-            mensagem: 'Foto inserida com sucesso',
-            foto :{
-                id: result.id,
-                denuncia: req.body.denuncia,
-                imagem_denuncia: req.body.imagem_denuncia,
-                
-                
-            },
-            url:`http://192.168.137.232:3000/${req.body.imagem_denuncia}`
+    res.status(201).json(response)
+        } catch (error) {
+            return res.status(500).send({error: error})
+            
         }
 
-        res.status(201).send(response);
-    } catch (error) {
-        return res.status(500).send({error: error})
-        
-    }
+      
+    
     
     
 };

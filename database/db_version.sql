@@ -9,7 +9,8 @@ CREATE TABLE IF NOT EXISTS Denunciante (
   nome VARCHAR(100),  
   senha VARCHAR(225),
   email VARCHAR(225),
-  PRIMARY KEY (denuncianteID)
+  token VARCHAR(100), 
+  PRIMARY KEY (denuncianteID)  
   
 );
 
@@ -18,19 +19,19 @@ CREATE TABLE  IF NOT EXISTS Atendente (
   nome VARCHAR(100),
   email VARCHAR(225) NOT NULL,
   senha VARCHAR(225) NOT NULL,
-  PRIMARY KEY (atendenteID)
+  PRIMARY KEY (atendenteID) 
 );
 
 CREATE TABLE IF NOT EXISTS Anonimo (
   id MEDIUMINT NOT NULL AUTO_INCREMENT,
   token VARCHAR(255),
-  PRIMARY KEY (id)
+  PRIMARY KEY (id) 
 );
 
 CREATE TABLE  IF NOT EXISTS CrimeAmbiental(
   id MEDIUMINT NOT NULL AUTO_INCREMENT,
   titulo VARCHAR(30),
-  PRIMARY KEY (id)
+  PRIMARY KEY (id)  
 );
 
 
@@ -50,8 +51,8 @@ CREATE TABLE IF NOT EXISTS Denuncia (
   encaminhado VARCHAR(30),
   condicao VARCHAR(20),
   PRIMARY KEY (id),
-  FOREIGN KEY (identificado) REFERENCES Denunciante(denuncianteID),
-  FOREIGN KEY (anonima) REFERENCES Anonimo(id)
+  FOREIGN KEY (identificado) REFERENCES Denunciante(denuncianteID) ON DELETE CASCADE,
+  FOREIGN KEY (anonima) REFERENCES Anonimo(id) ON DELETE CASCADE
   
  
 ) ;
@@ -72,8 +73,8 @@ CREATE TABLE IF NOT EXISTS Analisa(
   atendente MEDIUMINT NOT NULL, 
   denuncia MEDIUMINT NOT NULL,
   PRIMARY KEY(id),
-  FOREIGN KEY (atendente) REFERENCES Atendente(atendenteID),
-  FOREIGN KEY (denuncia) REFERENCES Denuncia(id) 
+  FOREIGN KEY (atendente) REFERENCES Atendente(atendenteID) ON DELETE CASCADE,
+  FOREIGN KEY (denuncia) REFERENCES Denuncia(id)  ON DELETE CASCADE
   
 );
 CREATE TABLE IF NOT EXISTS Pertence(
@@ -81,8 +82,8 @@ CREATE TABLE IF NOT EXISTS Pertence(
   crimeAmbiental  MEDIUMINT NOT NULL REFERENCES CrimeAmbiental(id) ,
   denuncia MEDIUMINT NOT NULL REFERENCES Denuncia(id),
   PRIMARY KEY(id),
-  FOREIGN KEY (crimeAmbiental) REFERENCES CrimeAmbiental(id),
-  FOREIGN KEY (denuncia) REFERENCES Denuncia(id)
+  FOREIGN KEY (crimeAmbiental) REFERENCES CrimeAmbiental(id)  ON DELETE CASCADE,
+  FOREIGN KEY (denuncia) REFERENCES Denuncia(id)  ON DELETE CASCADE
   
 ); 
 

@@ -31,6 +31,8 @@ const upload = multer({
     },
     fileFilter : fileFilter
 });
+// const upload = multer({ dest: 'uploads/' });
+
 
 const login = require('../middleware/login');
 
@@ -38,7 +40,7 @@ const FotoController = require('../controllers/foto-controller');
 
 router.get('/', login.obrigatorio, FotoController.getFoto);
 
-router.post('/', login.obrigatorio,upload.single('foto_imagem'), FotoController.postFoto);
+router.post('/', login.obrigatorio,  upload.array('images'), FotoController.postFoto);
 
 router.get('/:id', FotoController.getUmaFoto);
 

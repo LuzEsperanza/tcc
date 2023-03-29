@@ -144,7 +144,7 @@ exports.patchDenunciante = async (req, res, next) =>{
         const queryEmail = 'SELECT * FROM Denunciante WHERE email = ?';
         const resultEmail = await mysql.execute(queryEmail, [req.body.email]);
 
-        if (resultEmail.length > 0) {
+        if (resultEmail.length > 0 && resultEmail.id !== req.body.id) {
             return res.status(404).send({ message: 'Já existe email cadastrado'});
         }else{
             const hash = await bcrypt.hashSync(req.body.senha, 10);
