@@ -24,7 +24,7 @@ CREATE TABLE  IF NOT EXISTS Atendente (
 
 CREATE TABLE IF NOT EXISTS Anonimo (
   id MEDIUMINT NOT NULL AUTO_INCREMENT,
-  token VARCHAR(255),
+  codigo VARCHAR(255),
   PRIMARY KEY (id) 
 );
 
@@ -52,7 +52,7 @@ CREATE TABLE IF NOT EXISTS Denuncia (
   condicao VARCHAR(20),
   PRIMARY KEY (id),
   FOREIGN KEY (identificado) REFERENCES Denunciante(denuncianteID) ON DELETE CASCADE,
-  FOREIGN KEY (anonima) REFERENCES Anonimo(id) ON DELETE CASCADE
+  FOREIGN KEY (anonima) REFERENCES Anonimo(id) ON DELETE SET NULL
   
  
 ) ;

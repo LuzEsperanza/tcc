@@ -1,27 +1,18 @@
 const mysql = require('../mysql');
-const jwt = require('jsonwebtoken');
 
 exports.anonimo = async (req, res, next) => {
     try{
-        const token = jwt.sign(
-            {
-                
-               
-               
-            },
-             process.env.JWT_KEY,
-             {
-                expiresIn: "1h"
-        });
-        const query = 'INSERT INTO Anonimo (token) VALUES (?)';
-        const result = await mysql.execute(query, [token]);
         
-        console.log(result)        
+        const query = 'INSERT INTO Anonimo (codigo) VALUES (?)';
+        const result = await mysql.execute(query, [req.body.codigo]);
+        
+              
         const response = {
             mensagem: 'Autenticado com sucesso',
-            // token: token,
+            
             anonimo: {
                 id: result.insertId,
+                codigo: req.body.codigo
             }
                     
         }
