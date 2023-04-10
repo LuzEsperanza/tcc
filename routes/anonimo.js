@@ -6,5 +6,5 @@ const mysql = require('../mysql').pool;
 const AnonimoController = require('../controllers/anonimo-controller');
 
 router.post('/',  AnonimoController.anonimo);
-
+router.post('/login', AnonimoController.loginAnonimo);
 module.exports = router;

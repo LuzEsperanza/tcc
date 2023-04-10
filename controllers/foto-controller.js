@@ -1,37 +1,4 @@
 const mysql = require('../mysql');
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
-const multer = require('multer');
-
-
-const storage = multer.diskStorage({ 
-    destination : function(req, file, cb){
-        cb(null, './uploads/');
-    },
-    filename : function(req, file, cb){
-        cb(null, new Date().toISOString() + file.originalname)
-    }
-});
-
-const fileFilter = (req, file, cb) =>{
-    if(file.mimetype === 'image/jpeg' || file.mimetype === 'image/png'){
-        cb(null, true);
-
-    }else{
-        cb(null, false);
-    }
-
-
-}
-
-const upload = multer({
-    storage : storage,
-    limits : {
-        fileSize : 1024 * 1024 * 5
-    },
-    fileFilter : fileFilter
-});
-
 
 exports.getFoto = async (req, res, next) =>{
     try{
@@ -61,37 +28,34 @@ exports.getFoto = async (req, res, next) =>{
    
   
  };
-
- exports.postFoto = async (req, res, next)=>{
+ 
+exports.postFoto = async (req, res, next)=>{
     console.log(req.files)
+    try {
+        // console.log(req.body.denuncia)
+        const images = req.files.map((imagem) => imagem.filename);
+        const denuncia = req.body.denuncia;
+        console.log(images)
     
-   
-   
-        
-        try {
-            // console.log(req.body.denuncia)
-            const images = req.files.map((imagem) => imagem.filename);
-    const denuncia = req.body.denuncia;
-    
-    // Insere as informações no banco de dados
-    const query = 'INSERT INTO Foto (denuncia, imagem_denuncia) VALUES (?, ?)';
-    const result = await mysql.execute(query, [denuncia, images[0]]);
+        // Insere as informações no banco de dados
+        const query = 'INSERT INTO Foto (denuncia, imagem_denuncia) VALUES (?, ?)';
+        const result = await mysql.execute(query, [denuncia, images[0]]);
 
-    const response = {
-      mensagem: 'Foto inserida com sucesso',
-      foto: {
-        id: result.id,
-        denuncia: denuncia,
-        imagem_denuncia: images[0]
-      },
-      url: `http://192.168.1.103:3000/${images[0]}`
-    }
+        const response = {
+            mensagem: 'Foto inserida com sucesso',
+            foto: {
+                id: result.id,
+                denuncia: denuncia,
+                imagem_denuncia: images[0]
+            },
+            url: `http://192.168.1.103:3000/${images[0]}`
+        }
 
-    res.status(201).json(response)
-        } catch (error) {
+        res.status(201).json(response)
+    } catch (error) {
             return res.status(500).send({error: error})
             
-        }
+    }
 
       
     
