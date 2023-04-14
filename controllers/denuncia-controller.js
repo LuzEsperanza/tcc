@@ -72,7 +72,8 @@ exports.postDenuncia = async (req, res, next)=>{
             req.body.numero,           
             req.body.longitude,
             req.body.latitude,
-            req.body.informacaoDenunciado
+            req.body.informacaoDenunciado,
+           
         ]);
        
 
@@ -82,16 +83,13 @@ exports.postDenuncia = async (req, res, next)=>{
                     id: result.insertId,
                     identificado: req.body.identificado,
                     descricao: req.body.descricao,
-                    horarioAbordagem: req.body.horarioAbordagem,
-                    
-                    
-                    
+                    horarioAbordagem: req.body.horarioAbordagem,       
                     rua: req.body.rua,
                     numero: req.body.numero,
                     longitude: req.body.longitude,
                     latitude: req.body.latitude,
                     informacaoDenunciado: req.body.informacaoDenunciado,
-                    
+                                      
                                 
                     request: {
                         tipo: 'GET', 
@@ -223,6 +221,116 @@ exports.deleteDenuncia = async (req, res, next) =>{
 
     } catch (error) {
         return res.status(500).send({error: error});
+    }
+    
+};
+
+exports.postDenunciaAnonima = async (req, res, next)=>{
+    try{
+        
+        
+        const query = 'INSERT INTO Denuncia (anonima, descricao, horarioAbordagem , rua, numero,longitude, latitude, informacaoDenunciado) VALUES (?,?,?,?,?,?,?,?)';
+        const result = await mysql.execute(query, [ 
+            req.body.anonima,
+            req.body.descricao,
+            req.body.horarioAbordagem,
+            req.body.rua,
+            req.body.numero,           
+            req.body.longitude,
+            req.body.latitude,
+            req.body.informacaoDenunciado,
+           
+        ]);
+       
+
+        const response = {
+            mensagem: 'Denuncia inserida com sucesso',
+                denuncia :{
+                    id: result.insertId,
+                    anonima: req.body.anonima,
+                    descricao: req.body.descricao,
+                    horarioAbordagem: req.body.horarioAbordagem,       
+                    rua: req.body.rua,
+                    numero: req.body.numero,
+                    longitude: req.body.longitude,
+                    latitude: req.body.latitude,
+                    informacaoDenunciado: req.body.informacaoDenunciado,
+                                      
+                                
+                    request: {
+                        tipo: 'GET', 
+                        descricao: 'Returna todos os denuncia', 
+                        url: 'http://localhost:3000/denuncia' 
+                    }
+                }
+        }
+        
+        return res.status(201).send(response.denuncia);
+
+    }catch(error){
+        return res.status(500).send({error: error});
+    }
+   
+
+   
+};
+exports.getDenunciaAnonima =  async (req, res, next) =>{
+    try{
+        const query = `SELECT Pertence.id,
+                                Denuncia.anonima,
+                                Denuncia.descricao, 
+                                Denuncia.horaDenuncia,
+                                Denuncia.encaminhado,
+                                Denuncia.condicao,
+                                Pertence.denuncia,
+                     
+                                CrimeAmbiental.titulo
+                        FROM Pertence
+                            INNER JOIN Denuncia 
+                             ON Denuncia.id = Pertence.denuncia 
+                            INNER JOIN CrimeAmbiental 
+                              ON Pertence.crimeAmbiental = CrimeAmbiental.id
+                        WHERE Denuncia.anonima = ?;
+         `
+        const result = await mysql.execute(query, [req.params.anonima])
+        console.log(req.params.identificado)
+        const response = {
+            quantidade: result.length,
+            denuncia: result.map( denunc => {
+                return {
+                    id: result[0].id,
+                    anonima: denunc.anonima,
+                    descricao: denunc.descricao,
+                    horaDenuncia: denunc.horaDenuncia,
+                    encaminhado: denunc.encaminhado,
+                    condicao: denunc.condicao,
+                    denuncia: denunc.denuncia,
+
+                                                
+                    CrimeAmbiental: {
+                        tilulo: denunc.titulo,
+                    
+                    },
+                    Pertence: {
+                        id: denunc.id,
+                    
+                    },                              
+                                                
+                    request: {
+                        tipo: 'GET', 
+                        descricao: 'Retorna todos os detalhes um denunciante espefico', 
+                        url: 'http://localhost:3000/denunciante/' + denunc.id
+                    }
+                }
+            })
+        }
+        res.status(200).send(response.denuncia);
+
+    
+
+    }catch(error){
+        return res.status(500).send({error: error});
+
     }
     
 };

@@ -38,16 +38,16 @@ CREATE TABLE  IF NOT EXISTS CrimeAmbiental(
 CREATE TABLE IF NOT EXISTS Denuncia (
   id MEDIUMINT NOT NULL AUTO_INCREMENT,
   identificado MEDIUMINT,
-  horaDenuncia TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  descricao TEXT,
+  horaDenuncia DATE DEFAULT CURRENT_DATE,
+  descricao TEXT NOT NULL,
   veracidade BOOLEAN,
   horarioAbordagem TIME,
   informacaoDenunciado TEXT,
   anonima MEDIUMINT,
   rua VARCHAR(30) NOT NULL,
   numero INT NOT NULL,
-  longitude  FLOAT(10,8),
-  latitude FLOAT(10,8),
+  longitude  FLOAT(10,8) NOT NULL,
+  latitude FLOAT(10,8) NOT NULL,
   encaminhado VARCHAR(30),
   condicao VARCHAR(20),
   PRIMARY KEY (id),
@@ -61,7 +61,7 @@ CREATE TABLE IF NOT EXISTS Foto (
   imagem_denuncia VARCHAR(500),
   denuncia MEDIUMINT NOT NULL,
   PRIMARY KEY(id),
-  FOREIGN KEY (denuncia) REFERENCES Denuncia(id)
+  FOREIGN KEY (denuncia) REFERENCES Denuncia(id) ON DELETE CASCADE
   
   
 );

@@ -52,7 +52,8 @@ exports.loginAnonimo = async (req, res, next) => {
             const response = {
                 mensagem: 'Autenticado com sucesso',
                 token: token,
-                denunciante: {
+                
+                anonimo: {
                     id: results[0].id,
                     token: token
                 }

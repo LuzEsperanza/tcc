@@ -8,7 +8,11 @@ const DenunciaController = require('../controllers/denuncia-controller');
 
 router.get('/:identificado', login.obrigatorio, DenunciaController.getDenuncia);
 
+router.get('/anonimo/:anonima', DenunciaController.getDenunciaAnonima);
+
 router.post('/',  login.obrigatorio, DenunciaController.postDenuncia);
+
+router.post('/anonimo', DenunciaController.postDenunciaAnonima);
 
 router.get('/:id', login.atendente, DenunciaController.getUmaDenuncia);
 
