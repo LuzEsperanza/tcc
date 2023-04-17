@@ -29,7 +29,7 @@ exports.anonimo = async (req, res, next) => {
    
 };
 exports.loginAnonimo = async (req, res, next) => {
-    console.log(req.body.codigo)
+    // console.log(req.body.codigo)
     try{
         const query = 'SELECT * FROM Anonimo WHERE codigo = ?';
         const results = await mysql.execute(query, [ req.body.codigo]);

@@ -293,7 +293,7 @@ exports.getDenunciaAnonima =  async (req, res, next) =>{
                         WHERE Denuncia.anonima = ?;
          `
         const result = await mysql.execute(query, [req.params.anonima])
-        console.log(req.params.identificado)
+       
         const response = {
             quantidade: result.length,
             denuncia: result.map( denunc => {

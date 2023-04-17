@@ -40,6 +40,8 @@ router.get('/', login.obrigatorio, FotoController.getFoto);
 
 router.post('/', login.obrigatorio,  upload.array('images'), FotoController.postFoto);
 
+router.post('/anonimo', upload.array('images'), FotoController.postFoto);
+
 router.get('/:id', FotoController.getUmaFoto);
 
 router.patch('/',login.obrigatorio, upload.single('foto_imagem'), FotoController.pathFoto);
