@@ -1,6 +1,7 @@
 const mysql = require('../mysql');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const { token } = require('morgan');
 const nodemailer = require('nodemailer')
 
 exports.getDenunciante = async (req, res, next) =>{
@@ -98,7 +99,50 @@ exports.getDenunciante = async (req, res, next) =>{
     }
         
 };
+exports.postSocial = async (req, res, next)=>{
+    
 
+    try{
+        const queryToken = `SELECT * FROM Denunciante WHERE token = ?`
+        const resultToken = await mysql.execute(queryToken, [req.body.token]);
+        console.log(resultToken)
+        if (resultToken.length > 0) {
+            return res.status(404).send({ message: 'Já existe token cadastrado'});
+        }
+        else{
+            const query = 'INSERT INTO Denunciante (token) VALUES (?)';
+        
+        const result = await mysql.execute(query, [ req.body.token]);
+        console.log(result);
+        
+        const response = {
+            mensagem: 'Denunciante criado com sucesso',
+            denunciante :{
+                id: result.id,
+                token: req.body.token,
+               
+                                        
+                request: {
+                    tipo: 'GET', 
+                    descricao: 'Returna todos os denunciantes', 
+                    url: 'http://localhost:3000/denunciante' 
+                }
+            }
+        }
+       
+         return res.status(201).send(response.denunciante);
+
+        }
+        
+        
+
+
+    }catch(error){
+        return res.status(500).send({error: error});
+
+    }
+        
+};
 exports.getUmDenunciante = async (req, res, next) =>{
     try {
         const query = 'SELECT * FROM Denunciante WHERE denuncianteID = ?;';
