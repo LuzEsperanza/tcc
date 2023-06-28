@@ -9,7 +9,6 @@ CREATE TABLE IF NOT EXISTS Denunciante (
   nome VARCHAR(100),  
   senha VARCHAR(225),
   email VARCHAR(225),
-  token VARCHAR(300), 
   PRIMARY KEY (denuncianteID)  
   
 );
