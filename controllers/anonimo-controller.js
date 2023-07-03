@@ -1,26 +1,25 @@
 const mysql = require('../mysql');
 const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
 
-exports.anonimo = async (req, res, next) => {
+exports.anonimo = async (req, res, next) => {    
+     
     try{
-        
+        const hash = await bcrypt.hashSync(req.body.codigo, 10);       
+        console.log(hash);
         const query = 'INSERT INTO Anonimo (codigo) VALUES (?)';
-        const result = await mysql.execute(query, [req.body.codigo]);
-        
-              
+        const result = await mysql.execute(query, [hash ]);
+        console.log(result)
         const response = {
-            mensagem: 'Autenticado com sucesso',
-            
+            mensagem: 'Anonimo criado com sucesso',
             anonimo: {
                 id: result.insertId,
                 codigo: req.body.codigo
             }
-                    
+            
         }
-        return res.status(200).send(response.anonimo);
-
         
-           
+        return res.status(200).send(response.anonimo);         
         
     }catch(error){
         return res.status(500).send({error: error});
