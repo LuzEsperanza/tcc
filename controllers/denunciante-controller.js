@@ -185,40 +185,28 @@ exports.getUmDenunciante = async (req, res, next) =>{
 
 exports.patchDenunciante = async (req, res, next) =>{
     try {
-        const queryEmail = 'SELECT * FROM Denunciante WHERE email = ?';
-        const resultEmail = await mysql.execute(queryEmail, [req.body.email]);
-
-        if (resultEmail.length > 0 && resultEmail.id !== req.body.id) {
-            return res.status(404).send({ message: 'Já existe email cadastrado'});
-        }else{
-            const hash = await bcrypt.hashSync(req.body.senha, 10);
-            const query = 'UPDATE Denunciante SET email = ?, senha = ? WHERE denuncianteID = ?';
-            await mysql.execute(query, [
-                req.body.email,
-                hash,
-                req.params.denuncianteID
-            ]);
-            const response = {
-                mensagem : 'Denunciante atualizado com sucesso',
-                denuncianteAtualizado: {
-                    denuncianteID: req.params.denuncianteID,
-                    email: req.body.email,
-                    senha: req.body.senha,
+        const hash = await bcrypt.hashSync(req.body.senha, 10);
+        const query = 'UPDATE Denunciante SET senha = ? WHERE denuncianteID = ?';
+        await mysql.execute(query, [
+            hash,
+            req.params.denuncianteID
+        ]);
+        const response = {
+            mensagem : 'Denunciante atualizado com sucesso',
+            denuncianteAtualizado: {
+                denuncianteID: req.params.denuncianteID,
+                senha: req.body.senha,
                     
-                    request: {
-                        tipo: 'GET',
-                        descricao: 'Retorna todos os de talahes  de um denunciante',
-                        url: 'http://localhost:3000/denunciante'+ req.body.denuncianteID
-                    }
+                request: {
+                    tipo: 'GET',
+                    descricao: 'Retorna todos os de talahes  de um denunciante',
+                    url: 'http://localhost:3000/denunciante'+ req.body.denuncianteID
                 }
             }
-
-            return res.status(202).send(response);
-            
-
         }
 
-    } catch (error) {
+        return res.status(202).send(response);
+    }catch (error) {
         return res.status(500).send({error: error});
     }
    
