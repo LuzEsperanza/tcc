@@ -32,45 +32,27 @@ exports.getFoto = async (req, res, next) =>{
 exports.postFoto = async (req, res, next)=>{
     console.log(req.files)
     try {
-        // console.log(req.body.denuncia)
+       
         const images = req.files.map((imagem) => imagem.filename);
         const denuncia = req.body.denuncia;
-        console.log(images)
-    
-        // Insere as informações no banco de dados
-        images.forEach( async ( imagem_denuncia) => {
-            console.log(imagem_denuncia)
+        for (const imagem_denuncia of images) {
             const query = 'INSERT INTO Foto (denuncia, imagem_denuncia) VALUES (?, ?)';
             const result = await mysql.execute(query, [denuncia, imagem_denuncia]);
+        }
 
-            const response = {
-                mensagem: 'Foto inserida com sucesso',
-                foto: {
-                    id: result.id,
-                    denuncia: denuncia,
-                    imagem_denuncia: imagem_denuncia
-                },
-                url: `http://192.168.1.103:3000/${imagem_denuncia}`
-            }
-            res.status(201).json(response)
-            
-        });
-        // const query = 'INSERT INTO Foto (denuncia, imagem_denuncia) VALUES (?, ?)';
-        // const result = await mysql.execute(query, [denuncia, images[0]]);
+        const response = {
+            mensagem: 'Fotos inseridas com sucesso',
+            url: images.map((imagem) => `http://192.168.1.103:3000/${imagem}`)
+        };
 
-        // const response = {
-        //     mensagem: 'Foto inserida com sucesso',
-        //     foto: {
-        //         id: result.id,
-        //         denuncia: denuncia,
-        //         imagem_denuncia: images[0]
-        //     },
-        //     url: `http://192.168.1.103:3000/${images[0]}`
-        // }
-
+        res.status(201).json(response);
+        
+        
+        
         
     } catch (error) {
-            return res.status(500).send({error: error})
+        console.error(error);
+        res.status(500).json({ mensagem: 'Ocorreu um erro ao processar a requisição' });
             
     } 
 };

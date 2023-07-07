@@ -5,10 +5,8 @@ const bcrypt = require('bcrypt');
 exports.anonimo = async (req, res, next) => {    
      
     try{
-        const hash = await bcrypt.hashSync(req.body.codigo, 10);       
-        console.log(hash);
         const query = 'INSERT INTO Anonimo (codigo) VALUES (?)';
-        const result = await mysql.execute(query, [hash ]);
+        const result = await mysql.execute(query, [req.body.codigo]);
         console.log(result)
         const response = {
             mensagem: 'Anonimo criado com sucesso',
