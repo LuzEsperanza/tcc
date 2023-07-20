@@ -7,8 +7,8 @@ USE butterfly;
 CREATE TABLE IF NOT EXISTS Denunciante (
   denuncianteID  MEDIUMINT NOT NULL AUTO_INCREMENT,
   nome VARCHAR(100),  
-  senha VARCHAR(225),
-  email VARCHAR(225),
+  senha VARCHAR(225) NOT NULL,
+  email VARCHAR(225) NOT NULL,
   PRIMARY KEY (denuncianteID)  
   
 );
@@ -43,14 +43,14 @@ CREATE TABLE IF NOT EXISTS Denuncia (
   horarioAbordagem TIME,
   informacaoDenunciado TEXT,
   anonima MEDIUMINT,
-  rua VARCHAR(30) NOT NULL,
-  numero INT NOT NULL,
+  rua VARCHAR(30),
+  numero INT,
   longitude  FLOAT(10,8) NOT NULL,
   latitude FLOAT(10,8) NOT NULL,
   encaminhado VARCHAR(30),
   condicao VARCHAR(20),
   PRIMARY KEY (id),
-  FOREIGN KEY (identificado) REFERENCES Denunciante(denuncianteID) ON DELETE CASCADE,
+  FOREIGN KEY (identificado) REFERENCES Denunciante(denuncianteID) ON DELETE SET NULL,
   FOREIGN KEY (anonima) REFERENCES Anonimo(id) ON DELETE SET NULL
   
  
@@ -65,8 +65,6 @@ CREATE TABLE IF NOT EXISTS Foto (
   
 );
 
-
-
 CREATE TABLE IF NOT EXISTS Analisa(
   id MEDIUMINT NOT NULL AUTO_INCREMENT,
   atendente MEDIUMINT NOT NULL, 
@@ -77,9 +75,9 @@ CREATE TABLE IF NOT EXISTS Analisa(
   
 );
 CREATE TABLE IF NOT EXISTS Pertence(
-   id MEDIUMINT NOT NULL AUTO_INCREMENT,
-  crimeAmbiental  MEDIUMINT NOT NULL REFERENCES CrimeAmbiental(id) ,
-  denuncia MEDIUMINT NOT NULL REFERENCES Denuncia(id),
+  id MEDIUMINT NOT NULL AUTO_INCREMENT,
+  crimeAmbiental  MEDIUMINT NOT NULL,
+  denuncia MEDIUMINT NOT NULL,
   PRIMARY KEY(id),
   FOREIGN KEY (crimeAmbiental) REFERENCES CrimeAmbiental(id)  ON DELETE CASCADE,
   FOREIGN KEY (denuncia) REFERENCES Denuncia(id)  ON DELETE CASCADE
