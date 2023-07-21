@@ -10,7 +10,7 @@ exports.obrigatorio = (req, res, next) => {
         next();
 
     }catch(error){
-        return res.status(401).send({ mensagem: 'Falha na autenticação'})
+        return res.status(401).json({ mensagem: 'Email ou senha incorretos. Por favor, tente novamente.' });
 
     }
    
