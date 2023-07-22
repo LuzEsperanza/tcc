@@ -35,8 +35,7 @@ exports.loginAnonimo = async (req, res, next) => {
             return res.status(401).send({mensagem: 'Falha na autenticação'})
 
         }
-        else{
-            
+        else{          
 
             const token = jwt.sign({
                 id: results[0].id,

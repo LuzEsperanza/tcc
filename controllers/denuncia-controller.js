@@ -26,7 +26,7 @@ exports.getDenuncia =  async (req, res, next) =>{
                     id: denunc.id,
                     identificado: denunc.identificado,
                     descricao: denunc.descricao,
-                    horaDenuncia: denunc.horaDenuncia,
+                    horaDenuncia: denunc.horaDenuncia.toLocaleDateString('pt-BR'),
                     encaminhado: denunc.encaminhado,
                     condicao: denunc.condicao,
                                                 
@@ -301,7 +301,7 @@ exports.getDenunciaAnonima =  async (req, res, next) =>{
                     id: result[0].id,
                     anonima: denunc.anonima,
                     descricao: denunc.descricao,
-                    horaDenuncia: denunc.horaDenuncia,
+                    horaDenuncia: denunc.horaDenuncia.toLocaleDateString('pt-BR'),
                     encaminhado: denunc.encaminhado,
                     condicao: denunc.condicao,
                     denuncia: denunc.denuncia,

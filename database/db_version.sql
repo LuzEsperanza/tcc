@@ -82,4 +82,16 @@ CREATE TABLE IF NOT EXISTS Pertence(
   FOREIGN KEY (crimeAmbiental) REFERENCES CrimeAmbiental(id)  ON DELETE CASCADE,
   FOREIGN KEY (denuncia) REFERENCES Denuncia(id)  ON DELETE CASCADE
   
-); 
+);
+
+ALTER TABLE Denuncia
+MODIFY COLUMN veracidade BOOLEAN
+DEFAULT TRUE;
+
+ALTER TABLE Denuncia
+MODIFY COLUMN encaminhado Varchar(30)
+DEFAULT 'Técnico fiscal';
+
+ALTER TABLE Denuncia
+MODIFY COLUMN condicao Varchar(20)
+DEFAULT 'Pendente';
